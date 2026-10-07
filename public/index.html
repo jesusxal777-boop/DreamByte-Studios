@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DreamByte Studios — Animation Engine for AIs</title>
+  <link rel="icon" href="assets/cloud-icon.jpg" />
+  <style>
+    :root {
+      --glass-bg: rgba(255, 255, 255, 0.08);
+      --glass-border: rgba(255, 255, 255, 0.18);
+      --accent: #3b9eff;
+      --text: #e8f4ff;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+      background: radial-gradient(ellipse at center, #0a1628 0%, #02060f 100%);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* INTRO */
+    #intro {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.7s ease, visibility 0.7s;
+    }
+
+    #intro.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    #intro video {
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      background: #000;
+    }
+
+    .skip-btn {
+      position: absolute;
+      bottom: 32px;
+      right: 32px;
+      padding: 14px 32px;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 999px;
+      color: white;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      transition: all 0.25s ease;
+      z-index: 10000;
+    }
+
+    .skip-btn:hover {
+      background: rgba(255,255,255,0.22);
+      transform: scale(1.04);
+    }
+
+    /* MAIN */
+    .main {
+      opacity: 0;
+      transition: opacity 0.9s ease;
+    }
+    .main.visible { opacity: 1; }
+
+    header {
+      padding: 20px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      background: rgba(10, 22, 40, 0.55);
+      border-bottom: 1px solid var(--glass-border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo img {
+      height: 44px;
+      width: 44px;
+      border-radius: 12px;
+      object-fit: cover;
+    }
+
+    .logo-text {
+      font-size: 20px;
+      font-weight: 650;
+      letter-spacing: 0.5px;
+      background: linear-gradient(90deg, #a8d8ff, #3b9eff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero {
+      max-width: 1000px;
+      margin: 70px auto 40px;
+      padding: 0 24px;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.4rem, 5.5vw, 3.8rem);
+      font-weight: 720;
+      line-height: 1.12;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, #ffffff 10%, #8ecbff 55%, #3b9eff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      opacity: 0.88;
+      max-width: 620px;
+      margin: 0 auto 36px;
+      line-height: 1.55;
+    }
+
+    .cta {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 15px 34px;
+      border-radius: 999px;
+      font-size: 15.5px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.25s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #3b9eff, #1a6fd4);
+      color: white;
+      box-shadow: 0 4px 22px rgba(59, 158, 255, 0.4);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(59, 158, 255, 0.55);
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid var(--glass-border);
+      color: white;
+      backdrop-filter: blur(12px);
+    }
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.14);
+    }
+
+    .glass-card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--glass-border);
+      border-radius: 28px;
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      padding: 36px;
+      margin: 30px auto;
+      max-width: 820px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+    }
+
+    .dreambot-showcase {
+      display: flex;
+      align-items: center;
+      gap: 36px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .dreambot-showcase img {
+      width: 200px;
+      border-radius: 24px;
+      box-shadow: 0 0 50px rgba(59, 158, 255, 0.35);
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 24px;
+    }
+
+    .feature {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 24px;
+      backdrop-filter: blur(16px);
+    }
+
+    .feature h3 {
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+      color: #8ecbff;
+    }
+
+    .feature p {
+      font-size: 0.95rem;
+      opacity: 0.8;
+      line-height: 1.45;
+    }
+
+    footer {
+      text-align: center;
+      padding: 50px 24px 40px;
+      opacity: 0.55;
+      font-size: 13.5px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- INTRO OVERLAY -->
+  <div id="intro">
+    <video id="intro-video" autoplay muted playsinline preload="auto">
+      <source src="assets/intro.mp4" type="video/mp4">
+      Tu navegador no soporta video.
+    </video>
+    <button class="skip-btn" id="skip-btn">Saltar intro ✕</button>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main" id="main">
+    <header>
+      <div class="logo">
+        <img src="assets/cloud-icon.jpg" alt="DreamByte">
+        <span class="logo-text">DREAMBYTE STUDIOS</span>
+      </div>
+    </header>
+
+    <section class="hero">
+      <h1>Animation Engine<br>for Artificial Intelligence</h1>
+      <p>
+        Transform any rigged 3D model into a living character using natural language.
+        Zero cost. Fully local. Built for AI agents with native MCP support.
+      </p>
+      <div class="cta">
+        <a href="https://github.com/jesusxal777-boop/DreamByte-Studios" class="btn btn-primary" target="_blank">
+          View on GitHub
+        </a>
+        <button class="btn btn-secondary" onclick="alert('Editor coming in next commits!')">
+          Open Editor (soon)
+        </button>
+      </div>
+    </section>
+
+    <div class="glass-card">
+      <div class="dreambot-showcase">
+        <img src="assets/dreambot.jpg" alt="DreamBot">
+        <div style="text-align:left; max-width:340px;">
+          <h2 style="font-size:1.7rem; margin-bottom:10px;">Meet DreamBot</h2>
+          <p style="opacity:0.85; line-height:1.55;">
+            Official mascot of DreamByte Studios. Friendly, curious and always ready to help AIs bring 3D characters to life.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="features">
+      <div class="feature">
+        <h3>Zero Cost</h3>
+        <p>Runs 100% locally. One AI inference per animation. No subscriptions.</p>
+      </div>
+      <div class="feature">
+        <h3>MCP Native</h3>
+        <p>Any AI agent (Claude, Cursor, etc.) can call it as a tool.</p>
+      </div>
+      <div class="feature">
+        <h3>OBJ / GLB / FBX</h3>
+        <p>Upload your rigged model and animate it with plain text.</p>
+      </div>
+      <div class="feature">
+        <h3>Liquid Glass</h3>
+        <p>Modern translucent UI inspired by the latest design systems.</p>
+      </div>
+    </div>
+
+    <footer>
+      © 2026 DreamByte Studios · Made with 💙 and Liquid Glass · DreamBot is our mascot
+    </footer>
+  </div>
+
+  <script>
+    const intro = document.getElementById('intro');
+    const video = document.getElementById('intro-video');
+    const main = document.getElementById('main');
+    const skipBtn = document.getElementById('skip-btn');
+
+    let finished = false;
+
+    function endIntro() {
+      if (finished) return;
+      finished = true;
+      intro.classList.add('hidden');
+      main.classList.add('visible');
+      try { video.pause(); } catch(e) {}
+    }
+
+    skipBtn.addEventListener('click', endIntro);
+
+    video.addEventListener('ended', endIntro);
+    video.addEventListener('error', endIntro);
+
+    // Safety timeout (in case video never fires events)
+    setTimeout(endIntro, 16000);
+
+    // Force play attempt
+    video.play().catch(() => {
+      // Autoplay blocked → show skip and wait
+      console.log('Autoplay prevented, user can skip');
+    });
+  </script>
+</body>
+</html>
