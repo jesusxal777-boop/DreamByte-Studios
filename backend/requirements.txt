@@ -1,0 +1,9 @@
+fastapi>=0.110.0
+uvicorn[standard]>=0.27.0
+python-multipart>=0.0.9
+pydantic>=2.0
+aiofiles>=23.0
+# bpy is provided by Blender as a Python module (install Blender or use the bpy wheel)
+# For MCP:
+mcp>=1.0.0
+httpx>=0.27.0

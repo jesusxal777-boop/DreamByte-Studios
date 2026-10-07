@@ -1,11 +1,17 @@
-# DreamByte Backend (coming soon)
+# DreamByte Backend
 
-This folder will contain the FastAPI + headless Blender (bpy) animation engine.
+## Run
 
-Architecture inspired by Animato:
-- Upload model (OBJ/GLB/FBX)
-- Generate rich prompt with skeleton info
-- AI writes short bpy script
-- Server executes it and returns animated model
+```bash
+pip install -r requirements.txt
+python main.py
+```
 
-MCP server will also live here.
+API: http://127.0.0.1:8000
+Docs: http://127.0.0.1:8000/docs
+
+## MCP
+
+```bash
+python mcp_server.py
+```
